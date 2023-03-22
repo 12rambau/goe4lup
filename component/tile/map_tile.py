@@ -1,8 +1,10 @@
 """The map displayed in the map application."""
 
-from ipyleaflet import WidgetControl
+from sepal_ui import aoi
 from sepal_ui import mapping as sm
 from sepal_ui import sepalwidgets as sw
+
+from .aoi_control import AoiControl
 
 
 class MapTile(sw.Tile):
@@ -19,29 +21,14 @@ class MapTile(sw.Tile):
             )
         )
 
+        # creat the models
+        self.aoi_model = aoi.AoiModel()
+
+        # create the controls
+        aoi_control = AoiControl(self.m, self.aoi_model, position="bottomright")
+
+        # add them on the map
+        self.m.add_control(aoi_control)
+
         # create the tile
         super().__init__("map_tile", "", [self.m])
-
-    def set_code(self, link):
-        """Add the code link btn to the map."""
-        btn = sm.MapBtn("fa-solid fa-code", href=link, target="_blank")
-        control = WidgetControl(widget=btn, position="bottomleft")
-        self.m.add(control)
-
-        return
-
-    def set_wiki(self, link):
-        """Add the wiki link btn to the map."""
-        btn = sm.MapBtn("fa-solid fa-book-open", href=link, target="_blank")
-        control = WidgetControl(widget=btn, position="bottomleft")
-        self.m.add(control)
-
-        return
-
-    def set_issue(self, link):
-        """Add the code link btn to the map."""
-        btn = sm.MapBtn("fa-solid fa-bug", href=link, target="_blank")
-        control = WidgetControl(widget=btn, position="bottomleft")
-        self.m.add(control)
-
-        return

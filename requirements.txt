@@ -8,3 +8,8 @@ toml
 sepal_ui
 
 # custom libs
+earthengine-api
+ipyleaflet
+matplotlib
+pandas
+rasterio
