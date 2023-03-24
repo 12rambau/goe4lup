@@ -36,14 +36,14 @@ drivers = [
 ]
 
 driver_colors = {
-    "NONE": "white",
-    "URBAN": "gray",
-    "INFRA": "lightgray",
-    "ART_AGR": "lightred",
-    "INDUS_AGR": "red",
-    "ART_FOR": "lightgreen",
-    "INDUS_FOR": "green",
-    "ART_MIN": "lightblue",
-    "INDUS_MIN": "blue",
-    "OTHER": "purple",
+    "NONE": ["white", "#FBFBFB"],
+    "URBAN": ["gray", "#575757"],
+    "INFRA": ["lightgray", "#A3A3A3"],
+    "ART_AGR": ["lightred", "#FF8E7F"],
+    "INDUS_AGR": ["red", "#D63E2A"],
+    "ART_FOR": ["lightgreen", "#BBF970"],
+    "INDUS_FOR": ["green", "#72B026"],
+    "ART_MIN": ["lightblue", "#8ADAFF"],
+    "INDUS_MIN": ["blue", "#38AADD"],
+    "OTHER": ["purple", "#D252B9"],
 }

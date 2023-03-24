@@ -33,6 +33,19 @@ class FeatureView(sw.Tile):
         self.marker_cluster.visible = False
         self.m.add(self.marker_cluster)
 
+        # add a legend helpe to the map when selecting data
+        self.legend_control = sm.LegendControl(
+            legend_dict={
+                getattr(cm.feature_control.drivers, k): v[1]
+                for k, v in cp.driver_colors.items()
+            },
+            title=cm.feature_control.legend.title,
+            vertical=True,
+            position="bottomleft",
+        )
+        self.legend_control.legend_card.viz = False
+        self.m.add(self.legend_control)
+
         super().__init__("nested", cm.feature_control.title, [table])
 
         # add js behavior
@@ -61,7 +74,7 @@ class FeatureView(sw.Tile):
             lat = self.model.lats[i]
             lng = self.model.lngs[i]
             type = self.model.types[i]
-            icon = AwesomeIcon(name="", marker_color=cp.driver_colors[type])
+            icon = AwesomeIcon(name="", marker_color=cp.driver_colors[type][0])
             marker = Marker(icon=icon, location=(lat, lng))
             markers.append(marker)
 
@@ -91,3 +104,4 @@ class FeatureControl(sm.MenuControl):
         self.m.default_style = cursors[self.menu.v_model]
         self.view.activated = self.menu.v_model
         self.view.marker_cluster.visible = self.menu.v_model
+        self.view.legend_control.legend_card.viz = self.menu.v_model

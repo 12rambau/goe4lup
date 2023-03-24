@@ -20,6 +20,9 @@
       "INDUS_MIN": "indsutrial mining",
       "OTHER": "Other",
       "NONE": "Undefined"
+    },
+    "legend": {
+      "title": "drivers"
     }
   }
 }
