@@ -1,0 +1,13 @@
+{
+  "feature_control": {
+    "title": "Feature selection",
+    "table": {
+      "action": "action",
+      "type": "type",
+      "long": "longitude",
+      "lat": "latitude"
+    },
+    "new_feature": "New feature",
+    "validate": "validate"
+  }
+}

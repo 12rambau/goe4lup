@@ -4,7 +4,10 @@ from sepal_ui import aoi
 from sepal_ui import mapping as sm
 from sepal_ui import sepalwidgets as sw
 
+from component import model as cmod
+
 from .aoi_control import AoiControl
+from .feature_control import FeatureControl
 
 
 class MapTile(sw.Tile):
@@ -23,11 +26,16 @@ class MapTile(sw.Tile):
 
         # creat the models
         self.aoi_model = aoi.AoiModel()
+        self.feature_model = cmod.FeatureModel()
 
         # create the controls
         aoi_control = AoiControl(self.m, self.aoi_model, position="bottomright")
+        feature_control = FeatureControl(
+            self.m, self.feature_model, position="bottomright"
+        )
 
         # add them on the map
+        self.m.add_control(feature_control)
         self.m.add_control(aoi_control)
 
         # create the tile
