@@ -8,6 +8,18 @@
       "lat": "latitude"
     },
     "new_feature": "New feature",
-    "validate": "validate"
+    "validate": "validate",
+    "drivers": {
+      "INFRA": "infrastructure",
+      "URBAN": "urban",
+      "ART_AGR": "artisanal agriculture",
+      "INDUS_AGR": "industrial agriculture",
+      "ART_FOR": "artisanal forestry",
+      "INDUS_FOR": "industrial forestry",
+      "ART_MIN": "artisanal mining",
+      "INDUS_MIN": "indsutrial mining",
+      "OTHER": "Other",
+      "NONE": "Undefined"
+    }
   }
 }

@@ -3,11 +3,12 @@
 from sepal_ui import sepalwidgets as sw
 
 from component import model as cmod
+from component import parameter as cp
 from component.message import cm
 
 
 class TableIcon(sw.Icon):
-    def __init__(self, gliph: str, id: int):
+    def __init__(self, gliph: str, id: int, **kwargs):
         """A custom icon that embeds the id of the feature."""
         super().__init__(
             children=[gliph],
@@ -15,6 +16,7 @@ class TableIcon(sw.Icon):
             small=True,
             attributes={"data-feature": id},
             style_="font: var(--fa-font-solid);",
+            **kwargs,
         )
 
 
@@ -26,17 +28,32 @@ class FeatureRow(sw.Html):
 
         # Extract information from the model
         idx = self.model.get_index(id)
-        type = self.model.types[idx]
         latitude = self.model.lats[idx]
         longitude = self.model.lngs[idx]
+        valid = self.model.valids[idx]
+
+        # type is editable
+        self.w_type = sw.Select(
+            items=cp.drivers,
+            v_model=self.model.types[idx],
+            dense=True,
+            attributes={"data-feature": id},
+        )
 
         # create the crud interface
-        self.delete_btn = TableIcon("fa-solid fa-trash-can", id)
+        self.delete_btn = TableIcon("fa-solid fa-trash-can", id, class_="mr-1")
+        self.validate_btn = TableIcon("fa-solid fa-check", id)
+        row = sw.Row(children=[self.delete_btn, self.validate_btn])
+
+        # change behavior and visibility of the widget depending on the validity of the feature
+        if valid:
+            self.validate_btn.hide()
+            self.w_type.readonly = True
 
         # create the different cells
         td_list = [
-            sw.Html(tag="td", children=[self.delete_btn]),
-            sw.Html(tag="td", children=[type]),
+            sw.Html(tag="td", children=[row]),
+            sw.Html(tag="td", children=[self.w_type]),
             sw.Html(tag="td", children=[f"{longitude:.2f}"]),
             sw.Html(tag="td", children=[f"{latitude:.2f}"]),
         ]
@@ -45,12 +62,27 @@ class FeatureRow(sw.Html):
 
         # add js behaviour
         self.delete_btn.on_event("click", self.on_delete)
+        self.validate_btn.on_event("click", self.on_valid)
+        self.w_type.observe(self.on_type_change, "v_model")
 
     def on_delete(self, widget, *args) -> None:
-        """remove the feature from the list."""
+        """Remove the feature from the list."""
         self.model.remove_feature(widget.attributes["data-feature"])
 
         return
+
+    def on_type_change(self, change) -> None:
+        """Edit the type in the model."""
+        widget = change["owner"]
+        widget.error_messages = None
+        self.model.set_type(widget.attributes["data-feature"], widget.v_model)
+
+    def on_valid(self, widget, *args) -> None:
+        """Valid the feature type."""
+        try:
+            self.model.validate(widget.attributes["data-feature"])
+        except ValueError as e:
+            self.w_type.error_messages = [str(e)]
 
 
 class FeatureTable(sw.SimpleTable):

@@ -6,6 +6,7 @@ from sepal_ui import sepalwidgets as sw
 from traitlets import Bool
 
 from component import model as cmod
+from component import parameter as cp
 from component import widget as cw
 from component.message import cm
 
@@ -36,6 +37,7 @@ class FeatureView(sw.Tile):
 
         # add js behavior
         self.m.on_interaction(self.read_data)
+        self.model.observe(self.update_marker, "updated")
 
     def read_data(self, **kwargs) -> None:
         """Read the data when the map is clicked with the vinspector activated."""
@@ -47,15 +49,23 @@ class FeatureView(sw.Tile):
         # get the coordinates as (x, y)
         lng, lat = [c for c in reversed(kwargs.get("coordinates"))]
 
-        # add the marker to the layer
-        icon = AwesomeIcon(marker_color="white")
-        marker = Marker(icon=icon, location=(lat, lng))
-        self.marker_cluster.markers = (*self.marker_cluster.markers, marker)
-        marker.idx = self.model.updated  # use the updated var as an index value.
-
         # add the partial data to the model
-        # it will trigger the rebuild of the table
+        # it will trigger the rebuild of the table and the marker display
         self.model.add_feature(lng, lat)
+
+    def update_marker(self, *args):
+        """Update the markers tuple with the current features."""
+        markers = []
+        for i, idx in enumerate(self.model.ids):
+
+            lat = self.model.lats[i]
+            lng = self.model.lngs[i]
+            type = self.model.types[i]
+            icon = AwesomeIcon(name="", marker_color=cp.driver_colors[type])
+            marker = Marker(icon=icon, location=(lat, lng))
+            markers.append(marker)
+
+        self.marker_cluster.markers = tuple(markers)
 
 
 class FeatureControl(sm.MenuControl):
@@ -65,6 +75,8 @@ class FeatureControl(sm.MenuControl):
         super().__init__(
             icon_content="fa-solid fa-cogs", card_content=self.view, m=m, **kwargs
         )
+
+        self.set_size(min_width="40vw", max_width="40vw")
 
         # add js behavior
         self.menu.observe(self.toggle_cursor, "v_model")

@@ -10,6 +10,7 @@ class FeatureModel(model.Model):
     ids = List([]).tag(sync=True)
     lats = List([]).tag(sync=True)
     lngs = List([]).tag(sync=True)
+    valids = List([]).tag(sync=True)
 
     geo_interface = Dict({"type": "FeatureCollection", "features": []}).tag(sync=True)
 
@@ -37,10 +38,29 @@ class FeatureModel(model.Model):
         self.lngs.append(lng)
         self.ids.append(self.updated)
         self.types.append("NONE")
+        self.valids.append(False)
 
         self.updated += 1
 
         return
+
+    def set_type(self, id: int, type: str) -> None:
+        """set the type of the selected feature."""
+        index = self.get_index(id)
+        self.types[index] = type
+
+        self.updated += 1
+
+    def validate(self, id: int) -> None:
+        """validate a specific feature."""
+        index = self.get_index(id)
+
+        if self.types[index] == "NONE":
+            raise ValueError("Cannot validate a nonetype value, select a type first.")
+
+        self.valids[index] = True
+
+        self.updated += 1
 
     def remove_feature(self, id: int) -> None:
         """remove a feature from the geo_interface."""
@@ -50,6 +70,7 @@ class FeatureModel(model.Model):
         self.lngs.pop(index)
         self.ids.pop(index)
         self.types.pop(index)
+        self.valids.pop(index)
 
         self.updated += 1
 
